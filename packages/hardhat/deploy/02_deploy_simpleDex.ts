@@ -1,6 +1,8 @@
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { DeployFunction } from "hardhat-deploy/types";
 import { Contract } from "ethers";
+import tokenA from "../deployments/localhost/TokenA.json";
+import tokenB from "../deployments/localhost/TokenB.json";
 
 /**
  * Deploys a contract named "YourContract" using the deployer account and
@@ -22,10 +24,10 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
   const { deployer } = await hre.getNamedAccounts();
   const { deploy } = hre.deployments;
 
-  await deploy("YourContract", {
+  await deploy("guiSchetSimpleDex", {
     from: deployer,
     // Contract constructor arguments
-    args: [deployer],
+    args: [tokenA.address, tokenB.address],
     log: true,
     // autoMine: can be passed to the deploy function to make the deployment process faster on local networks by
     // automatically mining the contract deployment transaction. There is no effect on live networks.
@@ -33,12 +35,14 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
   });
 
   // Get the deployed contract to interact with it after deploying.
-  const yourContract = await hre.ethers.getContract<Contract>("YourContract", deployer);
-  console.log("👋 Initial greeting:", await yourContract.greeting());
+  const simpleDexContract = await hre.ethers.getContract<Contract>("guiSchetSimpleDex", deployer);
+  //console.log("👋 Initial greeting:", await TokenA.greeting());
+  console.log("👋 SimpleDex deployed to:", simpleDexContract);
+  //console.log("👋 yourContract deployed to:", yourContract.address);
 };
 
 export default deployYourContract;
 
 // Tags are useful if you have multiple deploy files and only want to run one of them.
 // e.g. yarn deploy --tags YourContract
-deployYourContract.tags = ["YourContract"];
+deployYourContract.tags = ["SimpleDex"];
